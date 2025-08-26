@@ -1,6 +1,6 @@
 from lupa import LuaRuntime
 import webview
-import sys
+import os
 import commands
 import luaglobals
 import json
@@ -19,7 +19,7 @@ lua.globals().Window = luaglobals.Window
 
 
 
-path = sys.argv[1]
+path = os.path.join(os.path.abspath( os.getcwd()),"access.json")
 
 json_object = None  # Will be set in run()
 
