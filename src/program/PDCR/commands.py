@@ -4,7 +4,7 @@ import main
 class Keyword:
     def __init__(self, name, description, alternatives,function):
         self.name = name
-        self.description = description;
+        self.description = description
         self.alternatives = alternatives
         self.function = function
     

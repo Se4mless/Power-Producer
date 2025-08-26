@@ -1,23 +1,25 @@
 from lupa import LuaRuntime
 import webview
 import sys
-import commands;
-import luaglobals;
-import json;
-import threading;
+import commands
+import luaglobals
+import json
+import threading
+
 
 lua = LuaRuntime()
 # Init Lua
 lua.globals().Object = luaglobals.Object
 lua.globals().call = luaglobals.call
-lua.globals().logInfo = luaglobals.info;
-lua.globals().logWarn = luaglobals.warn;
+lua.globals().logInfo = luaglobals.info
+lua.globals().logWarn = luaglobals.warn
 lua.globals().logError = luaglobals.error
 lua.globals().wait = luaglobals.wait
+lua.globals().Window = luaglobals.Window
 
 
 
-path = sys.argv[1];
+path = sys.argv[1]
 
 json_object = None  # Will be set in run()
 
