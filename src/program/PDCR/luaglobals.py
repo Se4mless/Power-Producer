@@ -1,10 +1,12 @@
 import main
 import colorama
 import time
-
+import sys
+import os
 from colorama import Fore, Back, Style
+sys.stdout = open(os.devnull,'w')
 import pygame
-
+sys.stdout = sys.__stdout__
 colorama.init()
 
 
@@ -97,11 +99,13 @@ class Window:
         self.height = h
 
     def start(self):
-        import os
+
+
         pygame.init()
+
         # Try to set window icon, but ignore if missing
         try:
-            pygame.display.set_icon(pygame.image.load("D:\.Projects\python\TermiPPTXGame\pie(3).png"))
+            pygame.display.set_icon(pygame.image.load("D:/.Projects/python/TermiPPTXGame/pie(3).png"))
         except Exception as e:
             print(f"Warning: Could not set window icon: {e}")
         self.screen = pygame.display.set_mode((self.width, self.height))
