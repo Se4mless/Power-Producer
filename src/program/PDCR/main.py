@@ -14,8 +14,9 @@ lua.globals().call = luaglobals.call
 lua.globals().logInfo = luaglobals.info
 lua.globals().logWarn = luaglobals.warn
 lua.globals().logError = luaglobals.error
-lua.globals().wait = luaglobals.wait
 lua.globals().Window = luaglobals.Window
+lua.globals().keyDown = luaglobals.isKeyDown
+lua.globals().keyDownNow = luaglobals.isKeyDownThisFrame
 
 
 

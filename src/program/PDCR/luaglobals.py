@@ -9,15 +9,16 @@ import pygame
 sys.stdout = sys.__stdout__
 colorama.init()
 
-
-
+global keyDownThisFrame
+keyDownThisFrame = ""
 
 
 
 class Object:
-    def __init__(self, name, window, idx, icon=None, x=None, y=None):
+    def __init__(self, name, window, idx,startFrame, icon=None, x=None, y=None):
         self.idx = idx
         self.window = window
+        self.startFrame = startFrame
         # Default to center of window if not specified
         self.x = x if x is not None else window.width // 2
         self.y = y if y is not None else window.height // 2
@@ -46,8 +47,16 @@ class Object:
     def add_feature(self,func):
         self.features.append(func)
 
-    def update(self):
-        for feature in self.features:feature(self,"Update")
+    
+
+    def update(self,frame):
+
+        for feature in self.features:feature(self,"Update",frame)
+
+            
+
+    def check_frame(self,frame,x):
+        return (frame - self.startFrame) % x == 0
 
 
 def call(name):
@@ -63,8 +72,6 @@ def warn(text):
 def error(text):
     print(f"{Style.BRIGHT}{Fore.RED}Error:{Style.RESET_ALL}{Fore.RED} {text}{Fore.RESET}")
 
-def wait(length):
-    time.sleep(length)
 
 
 
@@ -77,19 +84,20 @@ class Window:
         self.objects = []
         self.parents = []
         self.screen = None
-        self.clock = None
+        self.clock = pygame.time.Clock()
         self.running = False 
+
 
     def add(self, name, icon=None, x=0, y=0):
         idx = len(self.objects)
-        obj = Object(name, self, idx, icon=icon, x=x, y=y)
+        obj = Object(name, self, idx,self.clock.get_time(), icon=icon, x=x, y=y)
         self.objects.append(obj)
         self.parents.append(-1)
         return obj
 
     def add_child(self, name, parent, icon=None, x=0, y=0):
         idx = len(self.objects)
-        obj = Object(name, self, idx, icon=icon, x=x, y=y)
+        obj = Object(name, self, idx,self.clock.get_time(), icon=icon, x=x, y=y)
         self.objects.append(obj)
         self.parents.append(parent)
         return obj
@@ -108,37 +116,54 @@ class Window:
             pygame.display.set_icon(pygame.image.load("D:/.Projects/python/TermiPPTXGame/pie(3).png"))
         except Exception as e:
             print(f"Warning: Could not set window icon: {e}")
-        self.screen = pygame.display.set_mode((self.width, self.height))
+        self.screen = pygame.display.set_mode((self.width, self.height),vsync=1)
         self.running = True
-        self.clock = pygame.time.Clock()
         while self.running:
-            # Update Objects
-            for obj in self.objects:
-                obj.update()
-            
+            global keyDownThisFrame   
 
-
-
-
-            self.screen.fill((30, 30, 30))  # dark background
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.end()
                     break
+                if event.type == pygame.KEYDOWN:
+                    keyDownThisFrame = pygame.key.name(event.key)
+
             if not self.running:
                 break
+            # Update Objects
+            time = self.clock.get_time()
+            
+            for obj in self.objects:
+                obj.update(time)
+            
+
+
+
+            self.screen.fill((30, 30, 30))  # dark background
+
 
             # Render Objects
             for obj in self.objects:
                 pos = obj.get_pos()
-                self.screen.blit(pygame.image.load(obj.get_icon()),(pos["x"],pos["y"]))
-
-
+                img = pygame.image.load(obj.get_icon())
+                rect = img.get_rect()
+                draw_x = (self.screen.get_size()[0] // 2) + pos["x"] - rect.width // 2
+                draw_y = (self.screen.get_size()[1] // 2) + pos["y"] - rect.height // 2
+                self.screen.blit(img,(draw_x,draw_y))
 
             
+
+            keyDownThisFrame = ""
             pygame.display.flip()
             self.clock.tick(60)
 
     def end(self):
         self.running = False
         pygame.quit()
+    
+def isKeyDown(key):
+    return pygame.key.get_pressed()[pygame.key.key_code(key)] == 1
+def isKeyDownThisFrame(key):
+    return keyDownThisFrame == key
+
+            
