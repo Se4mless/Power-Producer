@@ -19,4 +19,11 @@ Example files object:
   "B":"folder/b.lua" // Used to denote subdirectories
 }
 ```
+You can then start with some basic lua code:
+
+<br><br>
+`main.lua`
+```
+logInfo("Hello")
+```
 
